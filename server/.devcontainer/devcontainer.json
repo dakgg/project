@@ -1,0 +1,27 @@
+{
+    "name": "Latecia Game Server",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "game-server",
+    "workspaceFolder": "/workspaces/latecia/${localWorkspaceFolderBasename}",
+    "overrideCommand": true,
+    "postCreateCommand": "dotnet dev-certs https",
+    "postStartCommand": "dotnet restore",
+        "customizations": {
+        "vscode": {
+            "extensions": [
+                "natqe.reload",
+                "ms-dotnettools.csharp",
+                "k--kato.docomment",
+                "janjoerke.align-by-regex",
+                "qwtel.sqlite-viewer",
+                "fernandoescolar.vscode-solution-explorer",
+                "janisdd.vscode-edit-csv",
+                "mechatroner.rainbow-csv",
+                "scabana.trxviewer",
+                "adpyke.codesnap",
+                "ms-dotnettools.csdevkit",
+                "Gruntfuggly.todo-tree"
+			]
+        }
+    }
+}

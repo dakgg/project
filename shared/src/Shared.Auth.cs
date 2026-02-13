@@ -5,6 +5,10 @@ namespace dakg.shared
         public LoginRequest() : base((int)MessageId.LOGIN_REQUEST)
         {
         }
+
+        public string PublicKey { get; set; }
+        public string PrivateKey { get; set; }
+
     }
 
     public class LoginResponse : ResponseBase

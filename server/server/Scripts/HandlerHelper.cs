@@ -14,7 +14,7 @@ public static class HandlerHelper
     {
         foreach (var handlerType in handlerTypes)
         {
-            services.AddSingleton(handlerType);
+            services.AddScoped(handlerType);
         }
     }
 

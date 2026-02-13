@@ -7,7 +7,10 @@ namespace dakg.shared
         }
     }
 
-    public class LoginResponse
+    public class LoginResponse : ResponseBase
     {
+        public LoginResponse() : base((int)ResponseResult.SUCCESS)
+        {
+        }
     }
 }

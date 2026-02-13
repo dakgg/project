@@ -1,9 +1,9 @@
 ﻿namespace dakg.shared
 {
-    public enum ErrrorCode
+    public enum ResponseResult
     {
         NONE = 0,
-        SUCCESS = 1,
+        SUCCESS,
         Error,
 	}
 }

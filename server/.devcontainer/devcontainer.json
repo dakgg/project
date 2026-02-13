@@ -1,11 +1,13 @@
 {
     "name": "Latecia Game Server",
     "dockerComposeFile": "../docker-compose.yml",
-    "service": "game-server",
-    "workspaceFolder": "/workspaces/latecia/${localWorkspaceFolderBasename}",
+    "service": "server",
+    "runServices": ["server", "admin", "mysql", "redis"],
+    "workspaceFolder": "/workspaces/dakg/${localWorkspaceFolderBasename}",
     "overrideCommand": true,
     "postCreateCommand": "dotnet dev-certs https",
     "postStartCommand": "dotnet restore",
+    "forwardPorts": [3306, 6379, 5000, 5001, 5100, 5101],
         "customizations": {
         "vscode": {
             "extensions": [

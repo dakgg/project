@@ -8,5 +8,6 @@ namespace dakg.shared
     public class ResponseBase(int messageId)
     {
         public MessageId MessageId { get; set; } = (MessageId)messageId;
+        public ResponseResult Result { get; set; } = ResponseResult.NONE;
     }
 }

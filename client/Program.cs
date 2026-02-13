@@ -20,3 +20,16 @@ else
 {
     Console.WriteLine($"Login 실패: {response.StatusCode}");
 }
+
+
+var test = new TestRequest();
+var haha = await client.PostAsJsonAsync("/TestRequest", test);
+if (haha.IsSuccessStatusCode)
+{
+    var result = await haha.Content.ReadFromJsonAsync<TestResponse>();
+    Console.WriteLine($"Test 성공! MessageId: {result?.MessageId}");
+}
+else
+{
+    Console.WriteLine($"Test 실패: {haha.StatusCode}");
+}

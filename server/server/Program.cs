@@ -27,6 +27,8 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseMiddleware<TransactionMiddleware>();
+
 app.MapGet("/", () => "Hello World!");
 app.MapHandlers(handlerTypes);
 

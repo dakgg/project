@@ -8,8 +8,6 @@ public class UserEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
 
-    public long Uid { get; set; }
-    
     [Required]
     [MaxLength(256)]
     public string PublicKey { get; set; } = string.Empty;

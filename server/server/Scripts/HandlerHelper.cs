@@ -33,6 +33,10 @@ public static class HandlerHelper
 
                 var route = $"/{requestType.Name}";
 
+                var responseType = method.ReturnType;
+                if (responseType.IsGenericType && responseType.GetGenericTypeDefinition() == typeof(Task<>))
+                    responseType = responseType.GetGenericArguments()[0];
+
                 app.MapPost(route, async (HttpContext context) =>
                 {
                     var request = await context.Request.ReadFromJsonAsync(requestType);
@@ -49,7 +53,11 @@ public static class HandlerHelper
                     }
 
                     return Results.Ok(result);
-                });
+                })
+                .Accepts(requestType, "application/json")
+                .Produces(200, responseType)
+                .WithName(method.Name)
+                .WithTags(handlerType.Name.Replace("Handler", ""));
 
                 Log.Information("Mapped POST {Route} -> {Handler}.{Method}", route, handlerType.Name, method.Name);
             }

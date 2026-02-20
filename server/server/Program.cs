@@ -16,10 +16,16 @@ var connectionString = $"Server={dbConfig.GetProperty("Server")};Port={dbConfig.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var handlerTypes = HandlerHelper.FindHandlerTypes();
 builder.Services.RegisterHandlers(handlerTypes);
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapGet("/", () => "Hello World!");
 app.MapHandlers(handlerTypes);

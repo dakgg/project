@@ -29,7 +29,10 @@ namespace server.Migrations.UserDb
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedTimeUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LastLoginTimeUtc")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PrivateKey")

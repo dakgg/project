@@ -9,7 +9,7 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
-var dbConfigPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "config", "dev", "database.json");
+var dbConfigPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "config", "dev", "database.json");
 var dbConfig = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(dbConfigPath));
 
 static string BuildConnectionString(JsonElement config, string key)

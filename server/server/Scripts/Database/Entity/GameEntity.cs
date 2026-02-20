@@ -12,5 +12,5 @@ public class GameEntity
     [MaxLength(128)]
     public string Name { get; set; } = string.Empty;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedTimeUtc { get; set; } = DateTime.UtcNow;
 }

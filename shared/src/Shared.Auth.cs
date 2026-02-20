@@ -16,5 +16,13 @@ namespace dakg.shared
         public LoginResponse() : base((int)ResponseResult.SUCCESS)
         {
         }
+
+        public User User { get; set; }
+    }
+
+    public class User
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
     }
 }

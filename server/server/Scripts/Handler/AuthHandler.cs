@@ -13,16 +13,26 @@ public class AuthHandler
 
     public async Task<LoginResponse> Login(LoginRequest request)
     {
-        Log.Information("LoginRequest received");
-
         var user = await _db.Users
             .FirstOrDefaultAsync(u => u.PublicKey == request.PublicKey && u.PrivateKey == request.PrivateKey);
 
         if (user == null)
         {
-            throw new UnauthorizedAccessException();
+            user = new UserEntity
+            {
+                PublicKey = request.PublicKey,
+                PrivateKey = request.PrivateKey,
+            };
+            _db.Users.Add(user);
+        }
+        else
+        {
+            user.LastLoginTimeUtc = DateTime.UtcNow;
         }
 
-        return new LoginResponse();
+        return new LoginResponse
+        {
+            User = new User { Id = user.Id }
+        };
     }
 }

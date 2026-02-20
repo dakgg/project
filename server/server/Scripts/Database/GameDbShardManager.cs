@@ -22,7 +22,7 @@ public class GameDbShardManager : IAsyncDisposable
         }).ToList();
     }
 
-    public GameDbContext GetShard(long id) => _contexts[(int)(id % _contexts.Count)];
+    public GameDbContext GetShard(UserEntity user) => _contexts[(int)(user.Id % _contexts.Count)];
 
     public IReadOnlyList<GameDbContext> All => _contexts;
 

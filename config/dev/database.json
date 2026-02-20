@@ -1,7 +1,24 @@
 {
-  "Server": "localhost",
-  "Port": 3306,
-  "Database": "server_db",
-  "User": "root",
-  "Password": "your_password"
+  "UserDb": {
+    "Server": "localhost",
+    "Port": 3306,
+    "Database": "user_db",
+    "User": "root",
+    "Password": "your_password"
+  },
+  "GameDbShardingCount" : 2,
+  "GameDb1": {
+    "Server": "localhost",
+    "Port": 3306,
+    "Database": "game_db_1",
+    "User": "root",
+    "Password": "your_password"
+  },
+  "GameDb2": {
+    "Server": "localhost",
+    "Port": 3306,
+    "Database": "game_db_2",
+    "User": "root",
+    "Password": "your_password"
+  }
 }

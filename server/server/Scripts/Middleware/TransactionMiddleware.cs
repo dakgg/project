@@ -10,18 +10,25 @@ public class TransactionMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, AppDbContext db)
+    public async Task InvokeAsync(HttpContext context, UserDbContext userDb, GameDbShardManager gameShards)
     {
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        var dbs = new List<DbContext> { userDb };
+        dbs.AddRange(gameShards.All);
+
+        var transactions = await Task.WhenAll(dbs.Select(db => db.Database.BeginTransactionAsync()));
+
         try
         {
             await _next(context);
-            await db.SaveChangesAsync();
-            await transaction.CommitAsync();
+            foreach (var db in dbs)
+                await db.SaveChangesAsync();
+            foreach (var tx in transactions)
+                await tx.CommitAsync();
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            foreach (var tx in transactions)
+                await tx.RollbackAsync();
             Log.Error(ex, "Transaction rolled back");
             throw;
         }

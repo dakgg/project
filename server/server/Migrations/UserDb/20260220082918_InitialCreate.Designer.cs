@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace server.Migrations
+namespace server.Migrations.UserDb
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20260213140134_InitialCreate")]
+    [DbContext(typeof(UserDbContext))]
+    [Migration("20260220082918_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,27 +23,6 @@ namespace server.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("GameEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("games");
-                });
 
             modelBuilder.Entity("UserEntity", b =>
                 {

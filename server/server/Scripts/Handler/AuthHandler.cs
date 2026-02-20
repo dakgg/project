@@ -4,9 +4,9 @@ using Serilog;
 
 public class AuthHandler
 {
-    private readonly AppDbContext _db;
+    private readonly UserDbContext _db;
 
-    public AuthHandler(AppDbContext db)
+    public AuthHandler(UserDbContext db)
     {
         _db = db;
     }

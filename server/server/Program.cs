@@ -11,10 +11,29 @@ builder.Host.UseSerilog();
 
 var dbConfigPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "config", "dev", "database.json");
 var dbConfig = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(dbConfigPath));
-var connectionString = $"Server={dbConfig.GetProperty("Server")};Port={dbConfig.GetProperty("Port")};Database={dbConfig.GetProperty("Database")};User={dbConfig.GetProperty("User")};Password={dbConfig.GetProperty("Password")};";
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+static string BuildConnectionString(JsonElement config, string key)
+{
+    var db = config.GetProperty(key);
+    return $"Server={db.GetProperty("Server")};Port={db.GetProperty("Port")};Database={db.GetProperty("Database")};User={db.GetProperty("User")};Password={db.GetProperty("Password")};";
+}
+
+// User DB
+var userConnStr = BuildConnectionString(dbConfig, "UserDb");
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseMySql(userConnStr, ServerVersion.AutoDetect(userConnStr)));
+
+// Game DB 샤딩 (GameDbShardingCount 만큼 동적 등록)
+var shardingCount = dbConfig.GetProperty("GameDbShardingCount").GetInt32();
+var gameDbShardConfig = new GameDbShardConfig();
+for (int i = 1; i <= shardingCount; i++)
+{
+    var connStr = BuildConnectionString(dbConfig, $"GameDb{i}");
+    var serverVersion = ServerVersion.AutoDetect(connStr);
+    gameDbShardConfig.Shards.Add((connStr, serverVersion));
+}
+builder.Services.AddSingleton(gameDbShardConfig);
+builder.Services.AddScoped<GameDbShardManager>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

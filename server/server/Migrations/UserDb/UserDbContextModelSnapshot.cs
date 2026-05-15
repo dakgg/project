@@ -47,6 +47,9 @@ namespace server.Migrations.UserDb
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PublicKey")
+                        .HasDatabaseName("idx_public_key");
+
                     b.ToTable("users");
                 });
 #pragma warning restore 612, 618

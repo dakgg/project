@@ -1,6 +1,5 @@
 using dakg.shared;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 public class AuthHandler
 {
@@ -14,7 +13,7 @@ public class AuthHandler
     public async Task<LoginResponse> Login(LoginRequest request)
     {
         var user = await _db.Users
-            .FirstOrDefaultAsync(u => u.PublicKey == request.PublicKey && u.PrivateKey == request.PrivateKey);
+            .FirstOrDefaultAsync(u => u.PublicKey == request.PublicKey);
 
         if (user == null)
         {
@@ -24,6 +23,14 @@ public class AuthHandler
                 PrivateKey = request.PrivateKey,
             };
             _db.Users.Add(user);
+
+            // SaveChanges here so the DB-generated Id is available before building the response.
+            // EF Core flushes SQL within the open transaction; the middleware commits it afterwards.
+            await _db.SaveChangesAsync();
+        }
+        else if (user.PrivateKey != request.PrivateKey)
+        {
+            return new LoginResponse { Result = ResponseResult.Error };
         }
         else
         {

@@ -1,6 +1,11 @@
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 
+/// <summary>
+/// Wraps each request in a transaction on UserDb and, if a handler enlists one,
+/// on the relevant game DB shard via <see cref="GameShardTransactionContext"/>.
+/// Opening transactions on all shards unconditionally causes unnecessary locks and
+/// connection waste, so shards are opted in lazily by handlers.
+/// </summary>
 public class TransactionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -10,25 +15,26 @@ public class TransactionMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, UserDbContext userDb, GameDbShardManager gameShards)
+    public async Task InvokeAsync(
+        HttpContext context,
+        UserDbContext userDb,
+        GameShardTransactionContext gameShardCtx)
     {
-        var dbs = new List<DbContext> { userDb };
-        dbs.AddRange(gameShards.All);
-
-        var transactions = await Task.WhenAll(dbs.Select(db => db.Database.BeginTransactionAsync()));
+        await using var userTx = await userDb.Database.BeginTransactionAsync();
 
         try
         {
             await _next(context);
-            foreach (var db in dbs)
-                await db.SaveChangesAsync();
-            foreach (var tx in transactions)
-                await tx.CommitAsync();
+
+            await userDb.SaveChangesAsync();
+            await userTx.CommitAsync();
+
+            await gameShardCtx.CommitAsync();
         }
         catch (Exception ex)
         {
-            foreach (var tx in transactions)
-                await tx.RollbackAsync();
+            await userTx.RollbackAsync();
+            await gameShardCtx.RollbackAsync();
             Log.Error(ex, "Transaction rolled back");
             throw;
         }

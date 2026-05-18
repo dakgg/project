@@ -42,12 +42,7 @@ for (int i = 1; i <= shardingCount; i++)
 }
 builder.Services.AddSingleton(gameDbShardConfig);
 builder.Services.AddScoped<GameDbShardManager>();
-
-// Day 7: 요청당 하나의 게임 샤드만 트랜잭션에 포함하는 스코프 서비스
 builder.Services.AddScoped<GameShardTransactionContext>();
-
-// Game services
-builder.Services.AddSingleton<GachaService>();
 
 // Redis (config.json에 Redis 설정이 없으면 스킵)
 try

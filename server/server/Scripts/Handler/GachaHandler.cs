@@ -58,7 +58,7 @@ public class GachaHandler
         var game = await shard.Games.FirstOrDefaultAsync(g => g.Uid == user.Id);
         if (game == null)
         {
-            game = new GameEntity { Uid = user.Id, Name = user.PublicKey };
+            game = new GameEntity { Uid = user.Id, Name = user.Username };
             shard.Games.Add(game);
         }
 

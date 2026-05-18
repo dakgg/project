@@ -77,6 +77,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseMiddleware<AuthMiddleware>();
 app.UseMiddleware<TransactionMiddleware>();
 
 app.MapGet("/", () => "Hello World!");

@@ -9,12 +9,16 @@ public class UserEntity
     public long Id { get; set; }
 
     [Required]
-    [MaxLength(256)]
-    public string PublicKey { get; set; } = string.Empty;
+    [MaxLength(64)]
+    public string Username { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(256)]
-    public string PrivateKey { get; set; } = string.Empty;
+    [MaxLength(128)]
+    public string PasswordHash { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(64)]
+    public string Salt { get; set; } = string.Empty;
 
     public DateTime CreatedTimeUtc { get; set; } = DateTime.UtcNow;
     public DateTime LastLoginTimeUtc { get; set; } = DateTime.UtcNow;

@@ -2,27 +2,43 @@ namespace dakg.shared
 {
     public class LoginRequest : RequestBase
     {
-        public LoginRequest() : base((int)MessageId.LOGIN_REQUEST)
-        {
-        }
+        public LoginRequest() : base((int)MessageId.LOGIN_REQUEST) { }
 
-        public string PublicKey { get; set; }
-        public string PrivateKey { get; set; }
-
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
     public class LoginResponse : ResponseBase
     {
-        public LoginResponse() : base((int)ResponseResult.SUCCESS)
-        {
-        }
+        public LoginResponse() : base((int)ResponseResult.SUCCESS) { }
 
-        public User User { get; set; }
+        public long Uid { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
 
-    public class User
+    public class RegisterRequest : RequestBase
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public RegisterRequest() : base((int)MessageId.REGISTER_REQUEST) { }
+
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterResponse : ResponseBase
+    {
+        public RegisterResponse() : base((int)ResponseResult.SUCCESS) { }
+
+        public long Uid { get; set; }
+        public string Token { get; set; } = string.Empty;
+    }
+
+    public class LogoutRequest : RequestBase
+    {
+        public LogoutRequest() : base((int)MessageId.LOGOUT_REQUEST) { }
+    }
+
+    public class LogoutResponse : ResponseBase
+    {
+        public LogoutResponse() : base((int)ResponseResult.SUCCESS) { }
     }
 }

@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace server.Migrations.UserDb
+namespace server.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20260220082918_InitialCreate")]
+    [Migration("20260518150748_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace server.Migrations.UserDb
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.13")
+                .HasAnnotation("ProductVersion", "9.0.16")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -32,7 +32,10 @@ namespace server.Migrations.UserDb
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedTimeUtc")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("LastLoginTimeUtc")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PrivateKey")

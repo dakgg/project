@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class BattleHandler
 {
-    // PlayerAtk = Level * AtkPerLevel vs EnemyHp = StageId * HpPerStage
     private const int AtkPerLevel  = 10;
     private const int HpPerStage   = 50;
     private const int GoldPerStage = 20;

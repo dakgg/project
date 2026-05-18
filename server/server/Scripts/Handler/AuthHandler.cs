@@ -24,8 +24,8 @@ public class AuthHandler
             };
             _db.Users.Add(user);
 
-            // SaveChanges here so the DB-generated Id is available before building the response.
-            // EF Core flushes SQL within the open transaction; the middleware commits it afterwards.
+            // DB가 생성한 Id를 응답에 쓰기 위해 여기서 SaveChanges 호출.
+            // EF Core가 열린 트랜잭션 안에서 SQL을 flush하고, 커밋은 미들웨어가 처리함.
             await _db.SaveChangesAsync();
         }
         else if (user.PrivateKey != request.PrivateKey)

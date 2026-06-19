@@ -4,3 +4,6 @@ Logs/
 Log/
 Library/
 .vscode/
+Temp/
+*.sln
+*.csproj

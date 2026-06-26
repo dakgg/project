@@ -34,6 +34,7 @@
   <Project Path="Unity.InputSystem.ForUI.csproj" />
   <Project Path="Unity.CollabProxy.Editor.csproj" />
   <Project Path="Unity.InputSystem.TestFramework.csproj" />
+  <Project Path="Dakgg.AddressablePacker.Editor.csproj" />
   <Project Path="Unity.VisualScripting.Shared.Editor.csproj" />
   <Project Path="Unity.Profiling.Core.csproj" />
   <Project Path="Unity.ScriptableBuildPipeline.csproj" />

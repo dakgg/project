@@ -308,9 +308,66 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2046211055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2046211057}
+  - component: {fileID: 2046211056}
+  m_Layer: 0
+  m_Name: BattleDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2046211056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046211055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7073ed74bbbb3427e85d1e178a375b12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapRadius: 5
+  hexSize: 0.5
+  obstacleRatio: 0.15
+  randomSeed: 12345
+  moveSpeed: 4
+  defaultColor: {r: 0.22, g: 0.24, b: 0.3, a: 1}
+  blockedColor: {r: 0.1, g: 0.1, b: 0.12, a: 1}
+  borderColor: {r: 0.45, g: 0.48, b: 0.55, a: 1}
+  pathColor: {r: 0.25, g: 0.55, b: 0.95, a: 1}
+  startColor: {r: 0.3, g: 0.85, b: 0.4, a: 1}
+  goalColor: {r: 0.95, g: 0.75, b: 0.2, a: 1}
+  unitColor: {r: 0.95, g: 0.3, b: 0.35, a: 1}
+--- !u!4 &2046211057
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046211055}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1596300746}
   - {fileID: 416548709}
+  - {fileID: 2046211057}

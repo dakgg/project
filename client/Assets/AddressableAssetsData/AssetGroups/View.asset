@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: View
   m_GUID: 29d646ec9c3dd4c68be63bb48cd62669
   m_SerializeEntries:
+  - m_GUID: 393cb11dfc6ab458e83d607078ce99e6
+    m_Address: BattleScenePage@View
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - $View
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3eb26b449d50e42378c7a70e80beb470
     m_Address: InitialSceneRootPage@View
     m_ReadOnly: 1

@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - $Scene
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8440dba85ac3488c8093571fca055e3
+    m_Address: BattleScene@Scene
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - $Scene
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 17cc3ac3f96084aacb2bba64028f909a, type: 2}
   m_SchemaSet:

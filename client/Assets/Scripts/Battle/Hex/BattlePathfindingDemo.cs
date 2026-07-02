@@ -9,7 +9,9 @@ namespace Battle.Hex
     /// BattleScene entry point for the hex A* demo. Builds a hexagon grid, draws it,
     /// spawns a unit token, and drives interaction:
     ///   - Left click  : set destination → A* path → highlight → move the token.
-    ///   - Right click : toggle an obstacle on a cell (recomputes the active path).
+    ///   - Right click : toggle an obstacle on a cell (spawner/unit/enemy cells excluded).
+    /// The map starts with no obstacles. Six spawners sit on the map's corner cells and
+    /// periodically spawn enemies that chase the player unit with per-step A* repathing.
     /// Attach this to an empty GameObject in the scene; everything else is created at runtime.
     /// </summary>
     public class BattlePathfindingDemo : MonoBehaviour
@@ -17,11 +19,15 @@ namespace Battle.Hex
         [Header("Grid")]
         [SerializeField] private int mapRadius = 5;
         [SerializeField] private float hexSize = 0.5f;
-        [SerializeField, Range(0f, 0.4f)] private float obstacleRatio = 0.15f;
-        [SerializeField] private int randomSeed = 12345;
+        [SerializeField] private float topBarHeightPx = 100f; // screen pixels reserved for the top bar UI
 
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 4f; // hexes per second
+
+        [Header("Enemies")]
+        [SerializeField] private float enemySpawnInterval = 3f;
+        [SerializeField] private int maxEnemies = 12;
+        [SerializeField] private float enemyMoveSpeed = 2.5f; // hexes per second
 
         [Header("Colors")]
         [SerializeField] private Color defaultColor = new Color(0.22f, 0.24f, 0.30f);
@@ -34,6 +40,9 @@ namespace Battle.Hex
 
         private HexGrid _grid;
         private HexGridRenderer _renderer;
+        private readonly List<HexSpawner> _spawners = new List<HexSpawner>();
+        private readonly List<HexEnemy> _enemies = new List<HexEnemy>();
+        private readonly HashSet<Hex> _enemyOccupied = new HashSet<Hex>();
         private Transform _unit;
         private Hex _unitHex;
         private List<Hex> _currentPath = new List<Hex>();
@@ -46,16 +55,19 @@ namespace Battle.Hex
             SetupCamera();
 
             _grid = new HexGrid(mapRadius);
-            GenerateObstacles();
 
             _renderer = GetComponent<HexGridRenderer>();
             if (_renderer == null)
                 _renderer = gameObject.AddComponent<HexGridRenderer>();
             _renderer.Build(_grid, hexSize, defaultColor, blockedColor, borderColor);
 
+            CreateSpawners();
+
             _unitHex = FindSpawnCell();
             CreateUnit();
             RedrawHighlights();
+
+            StartCoroutine(SpawnEnemyLoop());
         }
 
         private void SetupCamera()
@@ -63,24 +75,78 @@ namespace Battle.Hex
             if (_camera == null)
                 return;
             _camera.orthographic = true;
-            // Fit the whole hexagon map (a little margin).
-            _camera.orthographicSize = hexSize * (mapRadius + 1.5f) * 1.5f;
-            _camera.transform.position = new Vector3(0f, 0f, -10f);
-            _camera.transform.rotation = Quaternion.identity;
+
+            // Grid extents (pointy-top hexagon map): widest at the q = ±mapRadius corner
+            // cells (± half a hex beyond their centers), tallest at the r = ±mapRadius
+            // corner cells (± one hex tip beyond their centers).
+            float halfWidth = hexSize * Mathf.Sqrt(3f) * (mapRadius + 0.5f);
+            float halfHeight = hexSize * (1.5f * mapRadius + 1f);
+
+            // Fit both axes for the current aspect (portrait 1080x1920 included); the
+            // vertical fit only gets the screen below the top bar.
+            const float margin = 1.05f;
+            float screenH = _camera.pixelHeight;
+            float usableH = Mathf.Max(1f, screenH - topBarHeightPx);
+            float sizeForHeight = halfHeight * screenH / usableH;
+            float size = Mathf.Max(sizeForHeight, halfWidth / _camera.aspect) * margin;
+            _camera.orthographicSize = size;
+
+            // Anchor the grid's top edge right below the bar (not centered in the leftover
+            // space — with a width-bound fit the vertical slack is large and centering
+            // would make the bar reservation invisible).
+            float topBarWorld = topBarHeightPx * (2f * size / screenH);
+            float camY = halfHeight - size + topBarWorld;
+            _camera.transform.SetPositionAndRotation(new Vector3(0f, camY, -10f), Quaternion.identity);
             _camera.clearFlags = CameraClearFlags.SolidColor;
             _camera.backgroundColor = new Color(0.08f, 0.09f, 0.11f);
         }
 
-        private void GenerateObstacles()
+        private void CreateSpawners()
         {
-            var rng = new System.Random(randomSeed);
-            foreach (Hex h in new List<Hex>(_grid.AllCells))
+            // One spawner on each of the 6 corner cells of the hexagon map.
+            for (int i = 0; i < 6; i++)
             {
-                if (h == new Hex(0, 0))
-                    continue; // keep center clear for the spawn
-                if (rng.NextDouble() < obstacleRatio)
-                    _grid.SetBlocked(h, true);
+                Hex dir = Hex.Directions[i];
+                Hex corner = new Hex(dir.Q * mapRadius, dir.R * mapRadius);
+
+                var go = new GameObject($"Spawner_{i}");
+                go.transform.SetParent(transform, false);
+                var spawner = go.AddComponent<HexSpawner>();
+                spawner.Initialize(corner, hexSize, Color.HSVToRGB(i / 6f, 0.75f, 0.95f));
+                _spawners.Add(spawner);
             }
+        }
+
+        private IEnumerator SpawnEnemyLoop()
+        {
+            var wait = new WaitForSeconds(enemySpawnInterval);
+            int index = 0;
+            while (true)
+            {
+                yield return wait;
+                _enemies.RemoveAll(e => e == null);
+                if (_enemies.Count >= maxEnemies)
+                    continue;
+
+                // Round-robin over spawners; skip cells that are taken right now.
+                for (int tries = 0; tries < _spawners.Count; tries++)
+                {
+                    HexSpawner spawner = _spawners[index];
+                    index = (index + 1) % _spawners.Count;
+                    if (spawner.Cell == _unitHex || _enemyOccupied.Contains(spawner.Cell) || !_grid.IsWalkable(spawner.Cell))
+                        continue;
+                    _enemies.Add(spawner.SpawnEnemy(_grid, enemyMoveSpeed, () => _unitHex, _enemyOccupied));
+                    break;
+                }
+            }
+        }
+
+        private bool IsSpawnerCell(Hex h)
+        {
+            foreach (HexSpawner s in _spawners)
+                if (s.Cell == h)
+                    return true;
+            return false;
         }
 
         private Hex FindSpawnCell()
@@ -163,6 +229,10 @@ namespace Battle.Hex
                 return;
             if (hex == _unitHex)
                 return; // do not block the unit's own cell
+            if (IsSpawnerCell(hex))
+                return; // keep spawner cells walkable
+            if (_enemyOccupied.Contains(hex))
+                return; // do not block a cell an enemy is on / moving into
 
             _grid.ToggleBlocked(hex);
             _currentPath.Clear();
